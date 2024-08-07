@@ -3,8 +3,5 @@ from app import get_chain
 
 def test_my_chain() -> None:
     """Edit this test to test your chain."""
-    from langchain.llms.human import HumanInputLLM
-
-    llm = HumanInputLLM(input_func=lambda *args, **kwargs: "foo")
-    chain = get_chain(llm)
-    chain.invoke({"text": "foo"})
+    chain = get_chain()
+    chain.invoke({"human_input": "foo"})

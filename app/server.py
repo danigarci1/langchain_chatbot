@@ -16,11 +16,10 @@ from fastapi import FastAPI, HTTPException, Request
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_core import __version__
 from langchain_core.chat_history import BaseChatMessageHistory
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain.chat_models.openai import ChatOpenAI
 from typing_extensions import TypedDict
+from app.chain import get_chain
 
 from langserve import add_routes
 
@@ -117,16 +116,7 @@ def _per_request_config_modifier(
     return config
 
 
-# Declare a chain
-prompt = ChatPromptTemplate.from_messages(
-    [
-        ("system", "You're an assistant by the name of Bob."),
-        MessagesPlaceholder(variable_name="history"),
-        ("human", "{human_input}"),
-    ]
-)
-
-chain = prompt | ChatOpenAI()
+chain = get_chain()
 
 
 class InputChat(TypedDict):
