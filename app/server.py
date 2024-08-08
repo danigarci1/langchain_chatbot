@@ -121,7 +121,8 @@ chain = get_chain()
 
 class InputChat(TypedDict):
     """Input for the chat endpoint."""
-    human_input: str 
+
+    human_input: str
 
 
 chain_with_history = RunnableWithMessageHistory(

@@ -6,20 +6,19 @@ import os
 conversation_id = str(uuid.uuid4())
 
 chat_service_url = "http://127.0.0.1:8000/"
-user_id = "sample_user" 
+user_id = "sample_user"
 
-chat : RemoteRunnable = RemoteRunnable(chat_service_url, cookies={"user_id": user_id})
+chat: RemoteRunnable = RemoteRunnable(chat_service_url, cookies={"user_id": user_id})
 
 q = input("User (q to quit): ")
-while q!="q":
+while q != "q":
     response = chat.invoke(
-        {"human_input":q},
-            {
-                "configurable": {
-                    "conversation_id": conversation_id,
+        {"human_input": q},
+        {
+            "configurable": {
+                "conversation_id": conversation_id,
             },
         },
     )
     print(f"AI: {response.content}")
     q = input("User (q to quit): ")
-
