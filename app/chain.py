@@ -1,8 +1,8 @@
 from langchain.chat_models.openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.schema.runnable import Runnable
+from langchain_core.runnables import RunnableSerializable
 
-def get_chain()-> Runnable:
+def get_chain()-> RunnableSerializable:
     prompt = ChatPromptTemplate.from_messages(
     [
         ("system", "You're an assistant by the name of Bob."),

@@ -47,7 +47,7 @@ def _is_valid_identifier(value: str) -> bool:
 
 def create_session_factory(
     base_dir: Union[str, Path],
-) -> Callable[[str], BaseChatMessageHistory]:
+) -> Callable[[str, str], BaseChatMessageHistory]:
     """Create a factory that can retrieve chat histories.
 
     The chat histories are keyed by user ID and conversation ID.
