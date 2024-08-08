@@ -18,10 +18,10 @@ from langchain_core import __version__
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.runnables import ConfigurableFieldSpec
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from typing_extensions import TypedDict
-from app.chain import get_chain
-
 from langserve import add_routes
+from typing_extensions import TypedDict
+
+from app.chain import get_chain
 
 # Define the minimum required version as (0, 1, 0)
 # Earlier versions did not allow specifying custom config fields in
