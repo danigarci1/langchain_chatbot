@@ -1,6 +1,8 @@
 # langchain_chatbot_example
-
-Read the [Medium Article](https://medium.com/@iamdgarcia/from-zero-to-hero-llms-edition-episode-4-building-a-chatbot-with-langchain-424dbf365602)
+[![Langchain Chatbot example](assets/logo.png)](https://medium.com/@iamdgarcia/from-zero-to-hero-llms-edition-episode-4-building-a-chatbot-with-langchain-424dbf365602)
+[![GitHub release](https://img.shields.io/github/v/release/Abblix/Oidc.Server)](#)
+[![GitHub release date](https://img.shields.io/github/release-date/Abblix/Oidc.Server)](#)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Abblix/Oidc.Server)](#)
 
 ## Customise
 
