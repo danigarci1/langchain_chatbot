@@ -1,5 +1,7 @@
 # langchain_chatbot_example
 
+Read the [Medium Article](https://medium.com/@iamdgarcia/from-zero-to-hero-llms-edition-episode-4-building-a-chatbot-with-langchain-424dbf365602)
+
 ## Customise
 
 To customise this project, edit the following files:
@@ -34,16 +36,18 @@ export OPENAI_API_KEY="sk-..."
 To run the project locally, run
 
 ```
-make start
+make server
 ```
 
 This will launch a webserver on port 8001.
-
 Or via docker compose (does not use hot reload by default):
 
 ```
 docker compose up
 ```
+
+
+
 
 ## Deploy
 
@@ -73,4 +77,9 @@ make deploy_gcp
 
 ## Test
 
-You can test the chatbot interface running 
+You can run a local client using the command
+```
+make client
+```
+
+
