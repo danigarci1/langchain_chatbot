@@ -6,7 +6,7 @@ from langserve import RemoteRunnable
 #  one if you're continuing a conversation
 conversation_id = str(uuid.uuid4())
 
-chat_service_url = "http://127.0.0.1:8000/"
+chat_service_url = "http://127.0.0.1:8001/"
 user_id = "sample_user"
 
 chat: RemoteRunnable = RemoteRunnable(chat_service_url, cookies={"user_id": user_id})
@@ -21,5 +21,5 @@ while q != "q":
             },
         },
     )
-    print(f"AI: {response.content}")
+    print(f"AI: {response['content']}")
     q = input("User (q to quit): ")
