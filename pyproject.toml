@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "langchain_bot"
-version = "0.0.2"
+version = "0.0.3"
 description = ""
 authors = ["Daniel Garcia <info@iamdgarcia.com>"]
 license = "MIT"
@@ -16,6 +16,7 @@ langchain = "^0.1"
 openai = "<2"
 langchain-core = "^0.1"
 langchain-community = ">=0.0.1,<0.1.0" 
+pdfminer-six = "^20240706"
 
 
 [tool.poetry.group.lint.dependencies]

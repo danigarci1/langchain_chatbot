@@ -1,24 +1,22 @@
 #!/usr/bin/env python
-"""Example of a chat server with persistence handled on the backend.
 
-For simplicity, we're using file storage here -- to avoid the need to set up
-a database. This is obviously not a good idea for a production environment,
-but will help us to demonstrate the RunnableWithMessageHistory interface.
+import base64
 
-We'll use cookies to identify the user. This will help illustrate how to
-fetch configuration from the request.
-"""
 from typing import Any, Callable, Dict, Union
 
 from fastapi import FastAPI, HTTPException, Request
 from langchain_core import __version__
-from langchain_core.runnables import ConfigurableFieldSpec
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langserve import add_routes
-from typing_extensions import TypedDict
+from langchain_core.runnables import ConfigurableFieldSpec,RunnableLambda, RunnableParallel
+from langchain.pydantic_v1 import BaseModel, Field
+from langchain_core.document_loaders import Blob
+from langchain_community.document_loaders.parsers.pdf import PDFMinerParser
 
+from langserve import CustomUserType, add_routes
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=10000, chunk_overlap=200, add_start_index=True
+)
 from app.chain import get_chain
-from app.session import create_session_factory
 
 
 # Define the minimum required version as (0, 1, 0)
@@ -45,70 +43,47 @@ app = FastAPI(
 )
 
 
-def _per_request_config_modifier(
-    config: Dict[str, Any], request: Request
-) -> Dict[str, Any]:
-    """Update the config"""
-    config = config.copy()
-    configurable = config.get("configurable", {})
-    # Look for a cookie named "user_id"
-    user_id = request.cookies.get("user_id", None)
-
-    if user_id is None:
-        raise HTTPException(
-            status_code=400,
-            detail="No user id found. Please set a cookie named 'user_id'.",
-        )
-
-    configurable["user_id"] = user_id
-    config["configurable"] = configurable
-    return config
-
-
 chain = get_chain()
 
 
-class InputChat(TypedDict):
-    """Input for the chat endpoint."""
-
-    human_input: str
 
 
-chain_with_history = RunnableWithMessageHistory(
-    chain,
-    create_session_factory("chat_histories"),
-    input_messages_key="human_input",
-    history_messages_key="history",
-    history_factory_config=[
-        ConfigurableFieldSpec(
-            id="user_id",
-            annotation=str,
-            name="User ID",
-            description="Unique identifier for the user.",
-            default="",
-            is_shared=True,
-        ),
-        ConfigurableFieldSpec(
-            id="conversation_id",
-            annotation=str,
-            name="Conversation ID",
-            description="Unique identifier for the conversation.",
-            default="",
-            is_shared=True,
-        ),
-    ],
-).with_types(input_type=InputChat)
+
+class FileProcessingRequest(CustomUserType):
+    file: bytes = Field(..., extra={"widget": {"type": "base64file"}})
+    num_chars: int = 100
+
+import json
+def process_file(request: FileProcessingRequest) -> str:
+    """Extract the text from the first page of the PDF."""
+    text = request.file
+    if not isinstance(text, bytes):
+        text = request.file.encode('utf-8')
+    content = base64.decodebytes(text)
+    print(content)
+    blob = Blob(data=content)
+    docs = list(PDFMinerParser().lazy_parse(blob))
+    chunks = text_splitter.split_documents(docs)
+    # Iterate through the chunks and process each one
+    extracted_data = {}
+    for chunk in chunks:
+        response = chain.invoke({"text": chunk})
+        # Parse JSON response and merge with existing data
+        chunk_data = json.loads(response.content)
+        extracted_data.update(chunk_data)
+    print(extracted_data)
+    return json.dumps(extracted_data, indent=4)
 
 
 add_routes(
     app,
-    chain_with_history,
-    per_req_config_modifier=_per_request_config_modifier,
-    disabled_endpoints=["playground", "batch"],
+    RunnableLambda(process_file).with_types(input_type=FileProcessingRequest),
+    config_keys=["configurable"],
+    path="/pdf",
 )
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="localhost", port=8001)
