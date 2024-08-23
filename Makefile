@@ -7,6 +7,8 @@ server:
 	poetry run uvicorn app.server:app --reload
 client:
 	python app/client.py
+streamlit:
+	streamlit run app/st_client.py
 # Define a variable for the test file path.
 TEST_FILE ?= tests/
 
@@ -28,7 +30,7 @@ format format_diff:
 	poetry run ruff --select I --fix $(PYTHON_FILES)
 
 deploy_gcp:
-	gcloud run deploy langchain_chatbot_example --source . --port 8001 --env-vars-file .env.gcp.yaml --allow-unauthenticated --region us-central1 --min-instances 1
+	gcloud run deploy langchainbot --source . --port 8001 --env-vars-file .env.gcp.yaml --allow-unauthenticated --region us-central1 --min-instances 1 --cpu-throttling
 
 ######################
 # HELP
