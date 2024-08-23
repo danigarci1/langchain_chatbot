@@ -3,28 +3,41 @@ import base64
 from langserve import RemoteRunnable
 
 # Set up the Streamlit app
-st.title("Process File client")
+st.title("Chatbot")
+# Get the current prompt from the session state or set a default value
+prompt = st.session_state.get("prompt", [{"role": "system", "content": "none"}])
 
-# File uploader for PDF
-uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+# Display previous chat messages
+for message in prompt:
+    if message["role"] != "system":
+        with st.chat_message(message["role"]):
+            st.write(message["content"])
 
-if uploaded_file is not None:
-    # Read the uploaded file
-    file_data = uploaded_file.read()
+# Get the user's question using Streamlit's chat input
+question = st.chat_input("Ask anything")
+chat_service_url = "https://localhost:8000/pdf"
 
-    # Encode the file data to base64
-    encoded_data = base64.b64encode(file_data).decode("utf-8")
-
-    # Define the endpoint URL
-    chat_service_url = "https://localhost:8000/pdf"
-
-    # Create a RemoteRunnable instance
-    chat = RemoteRunnable(chat_service_url)
+# Create a RemoteRunnable instance
+chat = RemoteRunnable(chat_service_url,cookies={"user_id": "sample_user"})
+if question is not None:
+    prompt.append({"role": "user", "content": question})
+    
+    with st.chat_message("user"):
+        st.write(question)
+    # Display an empty assistant message while waiting for the response
+    with st.chat_message("assistant"):
+        botmsg = st.empty()
 
     # Send the encoded data to the endpoint
-    with st.spinner("Analizing file. Please wait..."):
-        response = chat.invoke({"file": encoded_data})
-    
-    # Display the response
-    st.subheader("Result:")
-    st.json(response)
+    response = chat.invoke(
+    {"human_input": question},
+    {
+        "configurable": {
+            "conversation_id": "1234",
+        },
+    },
+    )
+    prompt.append({"role": "assistant", "content": response.content})
+    st.session_state["prompt"] = prompt
+
+
