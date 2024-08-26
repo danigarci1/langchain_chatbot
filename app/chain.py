@@ -10,9 +10,9 @@ prompt = load_prompt('.prompt')
 
 
 def get_chain() -> RunnableSerializable:
-    prompt = PromptTemplate(
+    promptTemplate = PromptTemplate(
     input_variables=["text"],
     template=prompt,
     )
-    chain = prompt | ChatOpenAI()
+    chain = promptTemplate | ChatOpenAI()
     return chain

@@ -17,6 +17,8 @@ openai = "<2"
 langchain-core = "^0.1"
 langchain-community = ">=0.0.1,<0.1.0" 
 pdfminer-six = "^20240706"
+bs4 = "^0.0.2"
+playwright = "^1.46.0"
 
 
 [tool.poetry.group.lint.dependencies]
