@@ -15,7 +15,7 @@ for message in prompt:
 
 # Get the user's question using Streamlit's chat input
 question = st.chat_input("Ask anything")
-chat_service_url = "https://localhost:8000/pdf"
+chat_service_url = "https://127.0.0.1:8000"
 
 # Create a RemoteRunnable instance
 chat = RemoteRunnable(chat_service_url,cookies={"user_id": "sample_user"})

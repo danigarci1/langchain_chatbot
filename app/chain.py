@@ -6,7 +6,7 @@ def load_prompt(filename):
     with open(filename, 'r') as file:
         return file.read()
 
-prompt = load_prompt('.prompt')
+prompt = load_prompt('chatbot.prompt')
 
 def get_chain() -> RunnableSerializable:
     promptTemplate = ChatPromptTemplate.from_messages(

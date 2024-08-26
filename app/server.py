@@ -8,7 +8,6 @@ but will help us to demonstrate the RunnableWithMessageHistory interface.
 We'll use cookies to identify the user. This will help illustrate how to
 fetch configuration from the request.
 """
-from typing import Any, Callable, Dict, Union
 
 from fastapi import FastAPI, HTTPException, Request
 from langchain_core import __version__
@@ -19,7 +18,7 @@ from typing_extensions import TypedDict
 
 from app.chain import get_chain
 from app.session import create_session_factory
-import app.checker
+import app.checker as ch
 
 
 
@@ -30,24 +29,7 @@ app = FastAPI(
 )
 
 
-def _per_request_config_modifier(
-    config: Dict[str, Any], request: Request
-) -> Dict[str, Any]:
-    """Update the config"""
-    config = config.copy()
-    configurable = config.get("configurable", {})
-    # Look for a cookie named "user_id"
-    user_id = request.cookies.get("user_id", None)
 
-    if user_id is None:
-        raise HTTPException(
-            status_code=400,
-            detail="No user id found. Please set a cookie named 'user_id'.",
-        )
-
-    configurable["user_id"] = user_id
-    config["configurable"] = configurable
-    return config
 
 
 chain = get_chain()
@@ -88,7 +70,7 @@ chain_with_history = RunnableWithMessageHistory(
 add_routes(
     app,
     chain_with_history,
-    per_req_config_modifier=_per_request_config_modifier,
+    per_req_config_modifier= ch._per_request_config_modifier,
     disabled_endpoints=["playground", "batch"],
 )
 
