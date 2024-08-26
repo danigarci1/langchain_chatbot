@@ -9,7 +9,7 @@ def load_prompt(filename):
 prompt = load_prompt('.prompt')
 
 def get_chain() -> RunnableSerializable:
-    prompt = ChatPromptTemplate.from_messages(
+    promptTemplate = ChatPromptTemplate.from_messages(
         [
             ("system", prompt),
             MessagesPlaceholder(variable_name="history"),
@@ -17,5 +17,5 @@ def get_chain() -> RunnableSerializable:
         ]
     )
 
-    chain = prompt | ChatOpenAI()
+    chain = promptTemplate | ChatOpenAI()
     return chain
