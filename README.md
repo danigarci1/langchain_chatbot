@@ -87,6 +87,6 @@ You can run a local client using the command
 ```
 make client
 ```
-[![Langchain Chatbot example](assets/sample_client.gif)]
+![Langchain Chatbot example](assets/sample_client.gif)
 
 
